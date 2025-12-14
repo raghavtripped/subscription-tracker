@@ -6,6 +6,8 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
+export type SubscriptionCategory = 'Entertainment' | 'Utility' | 'Food' | 'Health' | 'Music' | 'Gaming' | 'News' | 'Other'
+
 export interface Database {
   public: {
     Tables: {
@@ -40,7 +42,7 @@ export interface Database {
           cost: number
           billing_cycle: 'Monthly' | 'Quarterly' | 'Yearly' | 'Once'
           start_date: string
-          category: 'Entertainment' | 'Utility' | 'Food' | 'Health'
+          category: SubscriptionCategory
           icon_key: string
           color: string
           payment_method: string | null
@@ -55,7 +57,7 @@ export interface Database {
           cost: number
           billing_cycle: 'Monthly' | 'Quarterly' | 'Yearly' | 'Once'
           start_date: string
-          category: 'Entertainment' | 'Utility' | 'Food' | 'Health'
+          category: SubscriptionCategory
           icon_key?: string
           color?: string
           payment_method?: string | null
@@ -70,7 +72,7 @@ export interface Database {
           cost?: number
           billing_cycle?: 'Monthly' | 'Quarterly' | 'Yearly' | 'Once'
           start_date?: string
-          category?: 'Entertainment' | 'Utility' | 'Food' | 'Health'
+          category?: SubscriptionCategory
           icon_key?: string
           color?: string
           payment_method?: string | null
@@ -86,4 +88,3 @@ export interface Database {
 export type Subscription = Database['public']['Tables']['subscriptions']['Row']
 export type SubscriptionInsert = Database['public']['Tables']['subscriptions']['Insert']
 export type SubscriptionUpdate = Database['public']['Tables']['subscriptions']['Update']
-

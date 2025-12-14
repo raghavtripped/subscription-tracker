@@ -1,15 +1,18 @@
 import { Subscription } from '@/types/database';
 import { formatCurrency, getDaysUntilRenewal, formatIndiaDate } from '@/lib/utils';
 import { SubscriptionIcon } from './SubscriptionIcon';
+import { Pencil } from 'lucide-react';
 
 interface SubscriptionCardProps {
   subscription: Subscription;
   onDelete?: (id: string) => void;
+  onEdit?: (subscription: Subscription) => void;
 }
 
 export function SubscriptionCard({
   subscription,
   onDelete,
+  onEdit,
 }: SubscriptionCardProps) {
   const daysUntilRenewal = getDaysUntilRenewal(
     subscription.start_date,
@@ -83,16 +86,28 @@ export function SubscriptionCard({
         </p>
       </div>
 
-      {onDelete && (
-        <button
-          onClick={() => onDelete(subscription.id)}
-          className="ml-2 p-2.5 text-red-600 hover:bg-red-50 rounded-lg transition-all hover:scale-110 font-bold text-xl"
-          aria-label="Delete subscription"
-          title="Delete subscription"
-        >
-          ×
-        </button>
-      )}
+      <div className="flex flex-col gap-2">
+        {onEdit && (
+          <button
+            onClick={() => onEdit(subscription)}
+            className="p-2.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-all hover:scale-110"
+            aria-label="Edit subscription"
+            title="Edit subscription"
+          >
+            <Pencil className="w-5 h-5" />
+          </button>
+        )}
+        {onDelete && (
+          <button
+            onClick={() => onDelete(subscription.id)}
+            className="p-2.5 text-red-600 hover:bg-red-50 rounded-lg transition-all hover:scale-110"
+            aria-label="Delete subscription"
+            title="Delete subscription"
+          >
+            ×
+          </button>
+        )}
+      </div>
     </div>
   );
 }

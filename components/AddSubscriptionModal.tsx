@@ -3,10 +3,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { X } from 'lucide-react';
 import {
+  PRESET_SERVICES,
   SUBSCRIPTION_PRESETS,
   findPresetByName,
+  type PresetService,
   type SubscriptionPreset,
 } from '@/lib/presets';
+import { SubscriptionCategory } from '@/types/database';
 import { createClient } from '@/utils/supabase/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { getTodayIndiaDateString } from '@/lib/utils';
@@ -21,13 +24,15 @@ export function AddSubscriptionModal({
   onClose,
 }: AddSubscriptionModalProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedPreset, setSelectedPreset] = useState<SubscriptionPreset | null>(null);
+  const [selectedPreset, setSelectedPreset] = useState<PresetService | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<string>('');
+  const [presetStartDate, setPresetStartDate] = useState(getTodayIndiaDateString());
   const [showCustomForm, setShowCustomForm] = useState(false);
   const [customName, setCustomName] = useState('');
   const [customCost, setCustomCost] = useState('');
   const [customBillingCycle, setCustomBillingCycle] = useState<'Monthly' | 'Quarterly' | 'Yearly' | 'Once'>('Monthly');
-  const [customCategory, setCustomCategory] = useState<'Entertainment' | 'Utility' | 'Food' | 'Health'>('Entertainment');
+  const [customStartDate, setCustomStartDate] = useState(getTodayIndiaDateString());
+  const [customCategory, setCustomCategory] = useState<SubscriptionCategory>('Entertainment');
   const [paymentMethod, setPaymentMethod] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -35,7 +40,7 @@ export function AddSubscriptionModal({
   const queryClient = useQueryClient();
 
   const filteredPresets = searchQuery
-    ? SUBSCRIPTION_PRESETS.filter((preset) =>
+    ? PRESET_SERVICES.filter((preset) =>
         preset.name.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : [];
@@ -46,7 +51,7 @@ export function AddSubscriptionModal({
     }
   }, [isOpen]);
 
-  const handlePresetSelect = (preset: SubscriptionPreset) => {
+  const handlePresetSelect = (preset: PresetService) => {
     setSelectedPreset(preset);
     setSearchQuery(preset.name);
     setShowCustomForm(false);
@@ -80,24 +85,14 @@ export function AddSubscriptionModal({
         const plan = selectedPreset.plans.find((p) => p.name === selectedPlan);
         if (!plan) return;
 
-        const billingCycleMap: Record<string, 'Monthly' | 'Quarterly' | 'Yearly' | 'Once'> = {
-          'Month': 'Monthly',
-          'Monthly': 'Monthly',
-          '3 Months': 'Quarterly',
-          'Quarterly': 'Quarterly',
-          'Yearly': 'Yearly',
-          'Year': 'Yearly',
-          'Once': 'Once',
-        };
-
         subscriptionData = {
           user_id: user.id,
           name: selectedPreset.name,
-          cost: plan.cost,
-          billing_cycle: billingCycleMap[selectedPlan] || 'Monthly',
-          start_date: getTodayIndiaDateString(),
+          cost: plan.price,
+          billing_cycle: plan.cycle,
+          start_date: presetStartDate || getTodayIndiaDateString(),
           category: selectedPreset.category,
-          icon_key: selectedPreset.iconKey,
+          icon_key: selectedPreset.icon_key,
           color: selectedPreset.color,
           payment_method: paymentMethod.trim() || null,
           active: true,
@@ -108,7 +103,7 @@ export function AddSubscriptionModal({
           name: customName,
           cost: parseFloat(customCost) || 0,
           billing_cycle: customBillingCycle,
-          start_date: getTodayIndiaDateString(),
+          start_date: customStartDate || getTodayIndiaDateString(),
           category: customCategory,
           icon_key: 'custom',
           color: '#6366f1',
@@ -132,10 +127,12 @@ export function AddSubscriptionModal({
       setSearchQuery('');
       setSelectedPreset(null);
       setSelectedPlan('');
+      setPresetStartDate(getTodayIndiaDateString());
       setShowCustomForm(false);
       setCustomName('');
       setCustomCost('');
       setCustomBillingCycle('Monthly');
+      setCustomStartDate(getTodayIndiaDateString());
       setCustomCategory('Entertainment');
       setPaymentMethod('');
 
@@ -239,12 +236,29 @@ export function AddSubscriptionModal({
                       }`}
                     >
                       <div className="flex justify-between items-center">
-                        <span className="font-semibold text-gray-900 text-base">{plan.name}</span>
-                        <span className="font-bold text-lg text-gray-900">₹{plan.cost}</span>
+                        <div>
+                          <span className="font-semibold text-gray-900 text-base block">{plan.name}</span>
+                          <span className="text-xs text-gray-600">{plan.cycle}</span>
+                        </div>
+                        <span className="font-bold text-lg text-gray-900">₹{plan.price}</span>
                       </div>
                     </button>
                   ))}
                 </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-800 mb-2">
+                  Start Date
+                </label>
+                <input
+                  type="date"
+                  value={presetStartDate}
+                  onChange={(e) => setPresetStartDate(e.target.value)}
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white transition-all"
+                />
+                <p className="mt-2 text-xs text-gray-600 font-medium">
+                  💡 When did/will this subscription start?
+                </p>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-800 mb-2">
@@ -314,6 +328,21 @@ export function AddSubscriptionModal({
               </div>
 
               <div>
+                <label className="block text-sm font-semibold text-gray-800 mb-2">
+                  Start Date
+                </label>
+                <input
+                  type="date"
+                  value={customStartDate}
+                  onChange={(e) => setCustomStartDate(e.target.value)}
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white transition-all"
+                />
+                <p className="mt-2 text-xs text-gray-600 font-medium">
+                  💡 When did/will this subscription start?
+                </p>
+              </div>
+
+              <div>
                 <label className="block text-sm font-semibold text-gray-800 mb-2">Category</label>
                 <select
                   value={customCategory}
@@ -332,6 +361,10 @@ export function AddSubscriptionModal({
                   <option value="Utility">Utility</option>
                   <option value="Food">Food</option>
                   <option value="Health">Health</option>
+                  <option value="Music">Music</option>
+                  <option value="Gaming">Gaming</option>
+                  <option value="News">News</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
               <div>
@@ -365,8 +398,8 @@ export function AddSubscriptionModal({
               disabled={
                 isSubmitting ||
                 (!selectedPreset && !showCustomForm) ||
-                (selectedPreset && !selectedPlan) ||
-                (showCustomForm && (!customName || !customCost))
+                (selectedPreset && (!selectedPlan || !presetStartDate)) ||
+                (showCustomForm && (!customName || !customCost || !customStartDate))
               }
               className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-semibold shadow-lg hover:shadow-xl"
             >

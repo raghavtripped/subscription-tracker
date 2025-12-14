@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS subscriptions (
   cost NUMERIC(10, 2) NOT NULL,
   billing_cycle TEXT NOT NULL CHECK (billing_cycle IN ('Monthly', 'Quarterly', 'Yearly', 'Once')),
   start_date DATE NOT NULL,
-  category TEXT NOT NULL CHECK (category IN ('Entertainment', 'Utility', 'Food', 'Health')),
+  category TEXT NOT NULL CHECK (category IN ('Entertainment', 'Utility', 'Food', 'Health', 'Music', 'Gaming', 'News', 'Other')),
   icon_key TEXT NOT NULL DEFAULT 'custom',
   color TEXT NOT NULL DEFAULT '#6366f1',
   payment_method TEXT, -- UPI ID, Card details, or payment method (e.g., "Paytm UPI", "HDFC Credit Card")

@@ -1,15 +1,18 @@
 'use client';
 
-import { useState } from 'react';
-import { Plus, LogOut } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Plus, LogOut, Calendar, List } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { createClient } from '@/utils/supabase/client';
 import { SubscriptionCard } from './SubscriptionCard';
 import { AddSubscriptionModal } from './AddSubscriptionModal';
+import { EditSubscriptionModal } from './EditSubscriptionModal';
 import {
   formatCurrency,
   calculateMonthlyCost,
   getDaysUntilRenewal,
+  getNextRenewalDate,
+  formatIndiaDate,
 } from '@/lib/utils';
 import { Subscription } from '@/types/database';
 import { useRouter } from 'next/navigation';
@@ -21,8 +24,20 @@ interface DashboardProps {
   };
 }
 
+type ViewMode = 'all' | 'upcoming';
+
+interface UpcomingRenewal {
+  subscription: Subscription;
+  renewalDate: Date;
+  daysUntil: number;
+  amount: number;
+}
+
 export function Dashboard({ user }: DashboardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingSubscription, setEditingSubscription] = useState<Subscription | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>('all');
   const queryClient = useQueryClient();
   const router = useRouter();
   const supabase = createClient();
@@ -75,6 +90,11 @@ export function Dashboard({ user }: DashboardProps) {
     router.push('/login');
   };
 
+  const handleEdit = (subscription: Subscription) => {
+    setEditingSubscription(subscription);
+    setIsEditModalOpen(true);
+  };
+
   // Calculate monthly spend
   const monthlySpend = subscriptions.reduce((total, sub) => {
     if (sub.billing_cycle === 'Once') return total;
@@ -84,11 +104,43 @@ export function Dashboard({ user }: DashboardProps) {
   const yearlyProjection = monthlySpend * 12;
 
   // Sort subscriptions by renewal date (soonest first)
-  const sortedSubscriptions = [...subscriptions].sort((a, b) => {
-    const daysA = getDaysUntilRenewal(a.start_date, a.billing_cycle);
-    const daysB = getDaysUntilRenewal(b.start_date, b.billing_cycle);
-    return daysA - daysB;
-  });
+  const sortedSubscriptions = useMemo(() => {
+    return [...subscriptions].sort((a, b) => {
+      const daysA = getDaysUntilRenewal(a.start_date, a.billing_cycle);
+      const daysB = getDaysUntilRenewal(b.start_date, b.billing_cycle);
+      return daysA - daysB;
+    });
+  }, [subscriptions]);
+
+  // Calculate upcoming renewals
+  const upcomingRenewals = useMemo(() => {
+    const renewals: UpcomingRenewal[] = [];
+
+    subscriptions.forEach((sub) => {
+      if (sub.billing_cycle === 'Once') return;
+
+      const renewalDate = getNextRenewalDate(sub.start_date, sub.billing_cycle);
+      const daysUntil = getDaysUntilRenewal(sub.start_date, sub.billing_cycle);
+
+      // Only show renewals in the next 90 days
+      if (daysUntil >= 0 && daysUntil <= 90) {
+        renewals.push({
+          subscription: sub,
+          renewalDate,
+          daysUntil,
+          amount: sub.cost,
+        });
+      }
+    });
+
+    // Sort by days until renewal (soonest first)
+    return renewals.sort((a, b) => a.daysUntil - b.daysUntil);
+  }, [subscriptions]);
+
+  // Calculate total upcoming amount
+  const totalUpcomingAmount = useMemo(() => {
+    return upcomingRenewals.reduce((total, renewal) => total + renewal.amount, 0);
+  }, [upcomingRenewals]);
 
   const displayName =
     profile?.full_name || user.email?.split('@')[0] || 'User';
@@ -133,6 +185,37 @@ export function Dashboard({ user }: DashboardProps) {
           </div>
         </div>
 
+        {/* View Tabs */}
+        <div className="mb-6 flex gap-4 bg-white p-2 rounded-xl shadow-lg border-2 border-gray-200">
+          <button
+            onClick={() => setViewMode('all')}
+            className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all ${
+              viewMode === 'all'
+                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md'
+                : 'text-gray-700 hover:bg-gray-100'
+            }`}
+          >
+            <List className="w-5 h-5" />
+            All Subscriptions
+          </button>
+          <button
+            onClick={() => setViewMode('upcoming')}
+            className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all ${
+              viewMode === 'upcoming'
+                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md'
+                : 'text-gray-700 hover:bg-gray-100'
+            }`}
+          >
+            <Calendar className="w-5 h-5" />
+            Upcoming Renewals
+            {upcomingRenewals.length > 0 && (
+              <span className="ml-2 px-2 py-0.5 bg-white/20 rounded-full text-sm">
+                {upcomingRenewals.length}
+              </span>
+            )}
+          </button>
+        </div>
+
         {/* Add Subscription Button */}
         <div className="mb-8">
           <button
@@ -144,13 +227,105 @@ export function Dashboard({ user }: DashboardProps) {
           </button>
         </div>
 
-        {/* Subscriptions List */}
+        {/* Content based on view mode */}
         {isLoading ? (
           <div className="text-center py-16 bg-white rounded-2xl shadow-lg border-2 border-gray-200">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
             <p className="text-lg text-gray-700 font-medium">Loading subscriptions...</p>
           </div>
+        ) : viewMode === 'upcoming' ? (
+          // Upcoming Renewals View
+          <div className="space-y-6">
+            {upcomingRenewals.length === 0 ? (
+              <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-200 p-12 md:p-16 text-center">
+                <div className="text-6xl mb-4">📅</div>
+                <p className="text-xl text-gray-700 font-semibold mb-2">No upcoming renewals</p>
+                <p className="text-gray-600">All your subscriptions are up to date!</p>
+              </div>
+            ) : (
+              <>
+                <div className="bg-gradient-to-r from-orange-500 to-red-600 p-6 rounded-2xl shadow-xl text-white">
+                  <p className="text-sm font-semibold text-orange-100 mb-2 uppercase tracking-wide">
+                    Total Amount Due (Next 90 Days)
+                  </p>
+                  <p className="text-3xl md:text-4xl font-bold">
+                    {formatCurrency(totalUpcomingAmount)}
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    Upcoming Renewals ({upcomingRenewals.length})
+                  </h2>
+                  {upcomingRenewals.map((renewal) => (
+                    <div
+                      key={renewal.subscription.id}
+                      className="bg-white rounded-xl shadow-lg border-2 border-gray-200 p-6 hover:shadow-xl transition-all"
+                    >
+                      <div className="flex items-center justify-between flex-wrap gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-4 mb-3">
+                            <div
+                              className="w-12 h-12 rounded-xl flex items-center justify-center text-white shadow-md"
+                              style={{ backgroundColor: renewal.subscription.color }}
+                            >
+                              <span className="text-xl font-bold">
+                                {renewal.subscription.name.charAt(0)}
+                              </span>
+                            </div>
+                            <div>
+                              <h3 className="font-bold text-lg text-gray-900">
+                                {renewal.subscription.name}
+                              </h3>
+                              <p className="text-sm text-gray-600">
+                                {renewal.subscription.category} • {renewal.subscription.billing_cycle}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="ml-16">
+                            <p className="text-sm text-gray-600 mb-1">
+                              <strong>Renewal Date:</strong>{' '}
+                              <span className="font-semibold text-gray-900">
+                                {formatIndiaDate(renewal.renewalDate.toISOString().split('T')[0])}
+                              </span>
+                            </p>
+                            <p
+                              className={`text-sm font-semibold ${
+                                renewal.daysUntil === 0
+                                  ? 'text-orange-600'
+                                  : renewal.daysUntil <= 3
+                                  ? 'text-yellow-600'
+                                  : 'text-green-600'
+                              }`}
+                            >
+                              {renewal.daysUntil === 0
+                                ? 'Renewing today!'
+                                : renewal.daysUntil === 1
+                                ? 'Renewing tomorrow'
+                                : `Renewing in ${renewal.daysUntil} days`}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-2xl font-bold text-gray-900 mb-2">
+                            {formatCurrency(renewal.amount)}
+                          </p>
+                          <button
+                            onClick={() => handleEdit(renewal.subscription)}
+                            className="text-sm text-blue-600 hover:text-blue-700 font-semibold"
+                          >
+                            Edit
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
         ) : sortedSubscriptions.length === 0 ? (
+          // Empty State
           <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-200 p-12 md:p-16 text-center">
             <div className="text-6xl mb-4">📭</div>
             <p className="text-xl text-gray-700 font-semibold mb-2">No subscriptions yet</p>
@@ -163,13 +338,17 @@ export function Dashboard({ user }: DashboardProps) {
             </button>
           </div>
         ) : (
+          // All Subscriptions View
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Your Subscriptions</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              Your Subscriptions ({sortedSubscriptions.length})
+            </h2>
             {sortedSubscriptions.map((subscription) => (
               <SubscriptionCard
                 key={subscription.id}
                 subscription={subscription}
                 onDelete={(id) => deleteMutation.mutate(id)}
+                onEdit={handleEdit}
               />
             ))}
           </div>
@@ -181,7 +360,16 @@ export function Dashboard({ user }: DashboardProps) {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
+
+      {/* Edit Subscription Modal */}
+      <EditSubscriptionModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setEditingSubscription(null);
+        }}
+        subscription={editingSubscription}
+      />
     </div>
   );
 }
-
