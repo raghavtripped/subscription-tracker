@@ -60,17 +60,19 @@ npm install
    - Copy **Project URL** and **anon public key**
 
 3) Run the Database Schema  
-   - Supabase Dashboard → SQL Editor → New Query  
-   - Copy `schema.sql` (fresh installs) OR run `schema_update.sql` + `schema_update_2.sql` if upgrading  
-   - Run the SQL (Cmd/Ctrl + Enter) → should say “Success”
+   - **Fresh Install**: Supabase Dashboard → SQL Editor → Copy & run `schema.sql`  
+   - **Upgrading Existing**: Run in order:
+     1. `schema_update.sql` (adds new categories)
+     2. `schema_update_2.sql` (adds `upcoming_renewals` view + ensures categories)
+   - Run SQL (Cmd/Ctrl + Enter) → should say "Success"
 
    Creates:  
-   - `profiles` table  
-   - `subscriptions` table  
-   - RLS policies  
+   - `profiles` table (user profiles)  
+   - `subscriptions` table (subscription data)  
+   - RLS policies (security)  
    - Profile auto-create trigger  
-   - `payment_method` field  
-   - `upcoming_renewals` view (from `schema_update_2.sql`)
+   - `payment_method` field (UPI/card tracking)  
+   - `upcoming_renewals` view (renewals in next 90 days)
 
 4) Enable Email Auth  
    - Authentication → Providers → Email = ON  
@@ -179,8 +181,14 @@ subscription-tracker/
 - RLS ensures users only see their own data
 
 ### `upcoming_renewals` view (schema_update_2.sql)
-- Shows renewals due in next 90 days
-- Includes `days_until` and `renewal_date`
+- Database view showing renewals due in next 90 days
+- Calculates renewal dates based on `start_date` and `billing_cycle`
+- Includes computed fields:
+  - `renewal_date`: Next renewal date
+  - `days_until`: Days until renewal (0-90)
+- Automatically filters active subscriptions
+- Can be queried directly: `SELECT * FROM upcoming_renewals WHERE user_id = '...'`
+- Note: Frontend currently calculates renewals client-side; view available for future use
 
 ## 🇮🇳 Indian Market Presets
 - **50+ services** across 8 categories: OTT, Music, Food, Utility, Health, News, Gaming, Other  
@@ -214,13 +222,22 @@ npm run lint     # lint
 - Date issues: all dates handled in India timezone
 
 ## 📝 Recent Updates
-- Added 50+ services across 8 categories
-- Added Edit Subscription modal (edit all fields)
-- Added Upcoming Renewals tab (next 90 days + total due)
-- Added start date inputs for preset and custom adds
-- Added new categories to schema + migration scripts
-- UI improvements across all pages/components
-- Added `schema_update_2.sql` for renewals view and categories
+
+### Latest (v2.0)
+- ✅ **50+ Indian Services**: Expanded from 10 to 50+ across 8 categories
+- ✅ **Edit Functionality**: Edit all subscription fields (name, cost, cycle, date, category, payment)
+- ✅ **Upcoming Renewals Tab**: View renewals in next 90 days with total amount due
+- ✅ **Start Date Input**: Set accurate start dates for precise renewal calculations
+- ✅ **Database View**: `upcoming_renewals` view for future query optimization
+- ✅ **Enhanced Categories**: Added Music, Gaming, News, Other (8 total categories)
+- ✅ **UI Improvements**: Better visibility, gradients, animations across all pages
+
+### Previous
+- Auth persistence via middleware
+- PWA support (manifest + metadata)
+- India timezone handling (Asia/Kolkata)
+- Payment method tracking
+- Beautiful gradient UI
 
 ## 🤝 Contributing
 PRs welcome!
