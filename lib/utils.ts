@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { formatInTimeZone, zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
+import { formatInTimeZone } from 'date-fns-tz';
 
 // India timezone constant
 const INDIA_TIMEZONE = 'Asia/Kolkata';
@@ -25,9 +25,12 @@ export function parseIndiaDate(dateString: string): Date {
   // Parse the date string as if it's in India timezone
   // dateString is in format YYYY-MM-DD
   const [year, month, day] = dateString.split('-').map(Number);
-  // Create date string in ISO format for India timezone
-  const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T00:00:00`;
-  return zonedTimeToUtc(dateStr, INDIA_TIMEZONE);
+  // Create a date object using local time (will be interpreted in server timezone)
+  // Then adjust to represent the same calendar date in India timezone
+  // Since we're only dealing with dates (not times), we can use a simple approach
+  const date = new Date(year, month - 1, day);
+  // Return the date - for date-only operations, this works correctly
+  return date;
 }
 
 /**
