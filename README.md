@@ -210,6 +210,20 @@ npm start        # start production
 npm run lint     # lint
 ```
 
+## 🌐 Deployment
+
+### Vercel (Recommended)
+1. Connect your GitHub repo to Vercel
+2. Add environment variables in Vercel dashboard:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+3. Deploy - build should succeed (login/signup pages are server-rendered)
+
+### Other Platforms
+- Ensure environment variables are set
+- Build command: `npm run build`
+- Start command: `npm start`
+
 ## 🔒 Security
 - RLS on all tables
 - Supabase Auth
@@ -217,13 +231,27 @@ npm run lint     # lint
 - Secure cookie handling
 
 ## 🐛 Troubleshooting
-- Login issues: check Site URL/Redirects in Supabase (`http://localhost:3000`), clear cookies, check console
-- DB issues: run `schema.sql` (fresh) or `schema_update.sql` + `schema_update_2.sql` (upgrade)
-- Date issues: all dates handled in India timezone
+
+### General Issues
+- **Login issues**: check Site URL/Redirects in Supabase (`http://localhost:3000`), clear cookies, check console
+- **DB issues**: run `schema.sql` (fresh) or `schema_update.sql` + `schema_update_2.sql` (upgrade)
+- **Date issues**: all dates handled in India timezone
+
+### Vercel Deployment Issues
+- **"Supabase URL and API key required" error**: This is normal - login/signup pages are server-rendered to prevent build-time env var issues
+- **Build fails with date-fns-tz errors**: Fixed in v2.1 - `zonedTimeToUtc` import was removed
+- **TypeScript errors in middleware**: Fixed in v2.1 - added proper type annotations for cookies
+- **Pages not loading**: Ensure environment variables are set in Vercel dashboard (Settings > Environment Variables)
 
 ## 📝 Recent Updates
 
-### Latest (v2.0)
+### Latest (v2.1) - Vercel Deployment Fixes
+- ✅ **Vercel Deployment**: Fixed build errors and deployment issues
+- ✅ **Dynamic Pages**: Login/signup pages now server-rendered to avoid build-time Supabase client issues
+- ✅ **Import Fixes**: Removed problematic `zonedTimeToUtc` import from `date-fns-tz`
+- ✅ **TypeScript Fixes**: Added proper type annotations for Supabase middleware cookies
+
+### v2.0 - Major Feature Update
 - ✅ **50+ Indian Services**: Expanded from 10 to 50+ across 8 categories
 - ✅ **Edit Functionality**: Edit all subscription fields (name, cost, cycle, date, category, payment)
 - ✅ **Upcoming Renewals Tab**: View renewals in next 90 days with total amount due

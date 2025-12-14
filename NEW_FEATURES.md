@@ -1,4 +1,12 @@
-# 🎉 New Features Added!
+# 🎉 New Features Added! (v2.1 Update)
+
+## 🆕 Latest Fixes - Vercel Deployment Issues Resolved
+
+### Deployment Fixes (v2.1)
+- ✅ **Vercel Build Success**: Fixed all build errors that were preventing deployment
+- ✅ **Dynamic Rendering**: Login and signup pages now use server-side rendering to avoid Supabase client initialization during build time
+- ✅ **Import Cleanup**: Removed problematic `zonedTimeToUtc` import from `date-fns-tz` that was causing build failures
+- ✅ **TypeScript Fixes**: Added proper type annotations for Supabase middleware cookie handling
 
 ## ✅ What's New
 
