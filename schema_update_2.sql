@@ -17,7 +17,19 @@ DROP VIEW IF EXISTS upcoming_renewals;
 CREATE VIEW upcoming_renewals AS
 WITH monthly AS (
   SELECT
-    s.*,
+    s.id,
+    s.user_id,
+    s.name,
+    s.cost,
+    s.billing_cycle,
+    s.start_date,
+    s.category,
+    s.icon_key,
+    s.color,
+    s.payment_method,
+    s.active,
+    s.created_at,
+    s.updated_at,
     (s.start_date + (n || ' month')::interval)::date AS renewal_date
   FROM subscriptions s
   CROSS JOIN generate_series(0, 60) AS n
@@ -25,7 +37,19 @@ WITH monthly AS (
 ),
 quarterly AS (
   SELECT
-    s.*,
+    s.id,
+    s.user_id,
+    s.name,
+    s.cost,
+    s.billing_cycle,
+    s.start_date,
+    s.category,
+    s.icon_key,
+    s.color,
+    s.payment_method,
+    s.active,
+    s.created_at,
+    s.updated_at,
     (s.start_date + (n * 3 || ' month')::interval)::date AS renewal_date
   FROM subscriptions s
   CROSS JOIN generate_series(0, 20) AS n
@@ -33,7 +57,19 @@ quarterly AS (
 ),
 yearly AS (
   SELECT
-    s.*,
+    s.id,
+    s.user_id,
+    s.name,
+    s.cost,
+    s.billing_cycle,
+    s.start_date,
+    s.category,
+    s.icon_key,
+    s.color,
+    s.payment_method,
+    s.active,
+    s.created_at,
+    s.updated_at,
     (s.start_date + (n || ' year')::interval)::date AS renewal_date
   FROM subscriptions s
   CROSS JOIN generate_series(0, 10) AS n
@@ -41,7 +77,19 @@ yearly AS (
 ),
 once_cycle AS (
   SELECT
-    s.*,
+    s.id,
+    s.user_id,
+    s.name,
+    s.cost,
+    s.billing_cycle,
+    s.start_date,
+    s.category,
+    s.icon_key,
+    s.color,
+    s.payment_method,
+    s.active,
+    s.created_at,
+    s.updated_at,
     s.start_date AS renewal_date
   FROM subscriptions s
   WHERE s.billing_cycle = 'Once'
@@ -58,7 +106,6 @@ all_cycles AS (
 next_renewal AS (
   SELECT
     ac.*,
-    ac.renewal_date,
     (ac.renewal_date - CURRENT_DATE) AS days_until
   FROM all_cycles ac
   WHERE ac.renewal_date >= CURRENT_DATE
