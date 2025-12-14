@@ -348,11 +348,7 @@ export function AddSubscriptionModal({
                   value={customCategory}
                   onChange={(e) =>
                     setCustomCategory(
-                      e.target.value as
-                        | 'Entertainment'
-                        | 'Utility'
-                        | 'Food'
-                        | 'Health'
+                      e.target.value as SubscriptionCategory
                     )
                   }
                   className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white transition-all font-medium"
