@@ -64,6 +64,7 @@ npm install
    - **Upgrading Existing**: Run in order:
      1. `schema_update.sql` (adds new categories)
      2. `schema_update_2.sql` (adds `upcoming_renewals` view + ensures categories)
+     3. `schema_update_3.sql` (adds Bi-Annual billing cycle + refreshes view)
    - Run SQL (Cmd/Ctrl + Enter) → should say "Success"
 
    Creates:  
@@ -106,14 +107,15 @@ Open http://localhost:3000
 1) Click **Add Subscription**  
 2) Type the service (e.g., Netflix)  
 3) Pick a plan (shows price + cycle)  
-4) Set **Start Date** (when it started/will start)  
-5) Optional: Payment method (UPI/card)  
-6) Add
+4) Adjust **Amount** if your price differs (discounts, regional pricing)  
+5) Set **Start Date** (when it started/will start)  
+6) Optional: Payment method (UPI/card)  
+7) Add
 
 **Custom Services:**
 1) Click **Add Subscription**  
 2) Type a name not in presets (e.g., “Doodhwala”) → “Create ...”  
-3) Fill: cost, billing cycle, **start date**, category (Entertainment, Utility, Food, Health, Music, Gaming, News, Other), payment method  
+3) Fill: cost, billing cycle (Monthly, Quarterly, Bi-Annual, Yearly, Once), **start date**, category (Entertainment, Utility, Food, Health, Music, Gaming, News, Other), payment method  
 4) Add
 
 ### Editing Subscriptions
@@ -134,6 +136,7 @@ Open http://localhost:3000
 ### Monthly Spend Calculation
 - Monthly: full cost
 - Quarterly: cost ÷ 3
+- Bi-Annual: cost ÷ 6
 - Yearly: cost ÷ 12
 - Once: excluded from monthly spend
 
@@ -177,10 +180,10 @@ subscription-tracker/
 - Links to `auth.users`, auto-created on signup
 
 ### `subscriptions`
-- Fields: `name`, `cost`, `billing_cycle (Monthly|Quarterly|Yearly|Once)`, `start_date`, `category (8)`, `icon_key`, `color`, `payment_method`, `active`, timestamps
+- Fields: `name`, `cost`, `billing_cycle (Monthly|Quarterly|Bi-Annual|Yearly|Once)`, `start_date`, `category (8)`, `icon_key`, `color`, `payment_method`, `active`, timestamps
 - RLS ensures users only see their own data
 
-### `upcoming_renewals` view (schema_update_2.sql)
+### `upcoming_renewals` view (schema_update_2.sql / schema_update_3.sql)
 - Database view showing renewals due in next 90 days
 - Calculates renewal dates based on `start_date` and `billing_cycle`
 - Includes computed fields:
