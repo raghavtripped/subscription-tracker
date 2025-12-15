@@ -122,8 +122,8 @@ export function Dashboard({ user }: DashboardProps) {
       const renewalDate = getNextRenewalDate(sub.start_date, sub.billing_cycle);
       const daysUntil = getDaysUntilRenewal(sub.start_date, sub.billing_cycle);
 
-      // Only show renewals in the next 90 days
-      if (daysUntil >= 0 && daysUntil <= 90) {
+      // Only show renewals in the next 31 days
+      if (daysUntil >= 0 && daysUntil <= 31) {
         renewals.push({
           subscription: sub,
           renewalDate,
@@ -246,7 +246,7 @@ export function Dashboard({ user }: DashboardProps) {
               <>
                 <div className="bg-gradient-to-r from-orange-500 to-red-600 p-6 rounded-2xl shadow-xl text-white">
                   <p className="text-sm font-semibold text-orange-100 mb-2 uppercase tracking-wide">
-                    Total Amount Due (Next 90 Days)
+                    Total Amount Due (Next 31 Days)
                   </p>
                   <p className="text-3xl md:text-4xl font-bold">
                     {formatCurrency(totalUpcomingAmount)}

@@ -11,7 +11,7 @@ A modern, beautiful PWA for tracking and managing your subscriptions, built spec
 
 - 🎯 **Smart Quick Add**: Search and add 50+ Indian subscriptions with one click
 - ✏️ **Edit Everything**: Edit name, cost, billing cycle, start date, category, payment method
-- 📅 **Upcoming Renewals**: Tab showing renewals in the next 90 days + total due
+- 📅 **Upcoming Renewals**: Tab showing renewals in the next 31 days + total due
 - 📊 **Beautiful Dashboard**: Monthly spend and yearly projections with gradient cards
 - 🔔 **Renewal Tracking**: Color-coded renewal status (overdue, soon, normal)
 - 💰 **Indian Currency**: All prices in ₹ (INR) with proper formatting
@@ -65,6 +65,7 @@ npm install
      1. `schema_update.sql` (adds new categories)
      2. `schema_update_2.sql` (adds `upcoming_renewals` view + ensures categories)
      3. `schema_update_3.sql` (adds Bi-Annual billing cycle + refreshes view)
+     4. `schema_update_4.sql` (limits upcoming_renewals to next 31 days)
    - Run SQL (Cmd/Ctrl + Enter) → should say "Success"
 
    Creates:  
@@ -125,7 +126,7 @@ Open http://localhost:3000
 
 ### Upcoming Renewals (New)
 - Switch to **Upcoming Renewals** tab
-- Shows renewals in next 90 days
+- Shows renewals in next 31 days
 - Displays renewal date, days until, amount due
 - Shows **Total Amount Due** across all upcoming renewals
 
@@ -184,7 +185,7 @@ subscription-tracker/
 - RLS ensures users only see their own data
 
 ### `upcoming_renewals` view (schema_update_2.sql / schema_update_3.sql)
-- Database view showing renewals due in next 90 days
+- Database view showing renewals due in next 31 days
 - Calculates renewal dates based on `start_date` and `billing_cycle`
 - Includes computed fields:
   - `renewal_date`: Next renewal date
@@ -257,7 +258,7 @@ npm run lint     # lint
 ### v2.0 - Major Feature Update
 - ✅ **50+ Indian Services**: Expanded from 10 to 50+ across 8 categories
 - ✅ **Edit Functionality**: Edit all subscription fields (name, cost, cycle, date, category, payment)
-- ✅ **Upcoming Renewals Tab**: View renewals in next 90 days with total amount due
+- ✅ **Upcoming Renewals Tab**: View renewals in next 31 days with total amount due
 - ✅ **Start Date Input**: Set accurate start dates for precise renewal calculations
 - ✅ **Database View**: `upcoming_renewals` view for future query optimization
 - ✅ **Enhanced Categories**: Added Music, Gaming, News, Other (8 total categories)
