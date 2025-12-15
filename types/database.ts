@@ -8,6 +8,8 @@ export type Json =
 
 export type SubscriptionCategory = 'Entertainment' | 'Utility' | 'Food' | 'Health' | 'Music' | 'Gaming' | 'News' | 'Other'
 
+export type BillingCycle = 'Monthly' | 'Quarterly' | 'Yearly' | 'Once' | 'Bi-Annual'
+
 export interface Database {
   public: {
     Tables: {
@@ -40,7 +42,7 @@ export interface Database {
           user_id: string
           name: string
           cost: number
-          billing_cycle: 'Monthly' | 'Quarterly' | 'Yearly' | 'Once'
+          billing_cycle: BillingCycle
           start_date: string
           category: SubscriptionCategory
           icon_key: string
@@ -55,7 +57,7 @@ export interface Database {
           user_id: string
           name: string
           cost: number
-          billing_cycle: 'Monthly' | 'Quarterly' | 'Yearly' | 'Once'
+          billing_cycle: BillingCycle
           start_date: string
           category: SubscriptionCategory
           icon_key?: string
@@ -70,7 +72,7 @@ export interface Database {
           user_id?: string
           name?: string
           cost?: number
-          billing_cycle?: 'Monthly' | 'Quarterly' | 'Yearly' | 'Once'
+          billing_cycle?: BillingCycle
           start_date?: string
           category?: SubscriptionCategory
           icon_key?: string

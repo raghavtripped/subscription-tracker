@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 import { useQueryClient } from '@tanstack/react-query';
-import { Subscription, SubscriptionCategory } from '@/types/database';
+import { BillingCycle, Subscription, SubscriptionCategory } from '@/types/database';
 import { getTodayIndiaDateString } from '@/lib/utils';
 
 interface EditSubscriptionModalProps {
@@ -20,7 +20,7 @@ export function EditSubscriptionModal({
 }: EditSubscriptionModalProps) {
   const [name, setName] = useState('');
   const [cost, setCost] = useState('');
-  const [billingCycle, setBillingCycle] = useState<'Monthly' | 'Quarterly' | 'Yearly' | 'Once'>('Monthly');
+  const [billingCycle, setBillingCycle] = useState<BillingCycle>('Monthly');
   const [startDate, setStartDate] = useState('');
   const [category, setCategory] = useState<SubscriptionCategory>('Entertainment');
   const [paymentMethod, setPaymentMethod] = useState('');
@@ -112,9 +112,7 @@ export function EditSubscriptionModal({
             <select
               value={billingCycle}
               onChange={(e) =>
-                setBillingCycle(
-                  e.target.value as 'Monthly' | 'Quarterly' | 'Yearly' | 'Once'
-                )
+                setBillingCycle(e.target.value as BillingCycle)
               }
               className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 bg-white transition-all font-medium"
             >
@@ -122,6 +120,7 @@ export function EditSubscriptionModal({
               <option value="Quarterly">Quarterly</option>
               <option value="Yearly">Yearly</option>
               <option value="Once">Once</option>
+              <option value="Bi-Annual">Bi-Annual (6 Months)</option>
             </select>
           </div>
 

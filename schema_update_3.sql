@@ -1,14 +1,7 @@
--- Migration: Upcoming renewals view + expanded categories (if not already applied)
--- Run this in Supabase SQL Editor if you already have data in production.
+-- Migration: Add Bi-Annual billing cycle support
+-- Run this in Supabase SQL Editor after deploying the app.
 
--- 1) Ensure categories constraint includes new categories
-ALTER TABLE subscriptions 
-  DROP CONSTRAINT IF EXISTS subscriptions_category_check;
-
-ALTER TABLE subscriptions 
-  ADD CONSTRAINT subscriptions_category_check 
-  CHECK (category IN ('Entertainment', 'Utility', 'Food', 'Health', 'Music', 'Gaming', 'News', 'Other'));
-
+-- 1) Expand billing_cycle constraint
 ALTER TABLE subscriptions 
   DROP CONSTRAINT IF EXISTS subscriptions_billing_cycle_check;
 
@@ -16,9 +9,7 @@ ALTER TABLE subscriptions
   ADD CONSTRAINT subscriptions_billing_cycle_check 
   CHECK (billing_cycle IN ('Monthly', 'Quarterly', 'Bi-Annual', 'Yearly', 'Once'));
 
--- 2) Create a view for upcoming renewals (next 90 days)
---    This view calculates the next renewal date based on billing_cycle.
---    It limits results to renewals that are due in the next 90 days.
+-- 2) Recreate upcoming_renewals view to include Bi-Annual cycle
 DROP VIEW IF EXISTS upcoming_renewals;
 
 CREATE VIEW upcoming_renewals AS
@@ -143,5 +134,4 @@ SELECT *
 FROM next_renewal
 WHERE days_until <= 90
 ORDER BY renewal_date ASC;
-
 

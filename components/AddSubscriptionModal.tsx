@@ -9,7 +9,7 @@ import {
   type PresetService,
   type SubscriptionPreset,
 } from '@/lib/presets';
-import { SubscriptionCategory } from '@/types/database';
+import { BillingCycle, SubscriptionCategory } from '@/types/database';
 import { createClient } from '@/utils/supabase/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { getTodayIndiaDateString } from '@/lib/utils';
@@ -26,11 +26,12 @@ export function AddSubscriptionModal({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPreset, setSelectedPreset] = useState<PresetService | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<string>('');
+  const [presetCostOverride, setPresetCostOverride] = useState<string>('');
   const [presetStartDate, setPresetStartDate] = useState(getTodayIndiaDateString());
   const [showCustomForm, setShowCustomForm] = useState(false);
   const [customName, setCustomName] = useState('');
   const [customCost, setCustomCost] = useState('');
-  const [customBillingCycle, setCustomBillingCycle] = useState<'Monthly' | 'Quarterly' | 'Yearly' | 'Once'>('Monthly');
+  const [customBillingCycle, setCustomBillingCycle] = useState<BillingCycle>('Monthly');
   const [customStartDate, setCustomStartDate] = useState(getTodayIndiaDateString());
   const [customCategory, setCustomCategory] = useState<SubscriptionCategory>('Entertainment');
   const [paymentMethod, setPaymentMethod] = useState('');
@@ -56,12 +57,19 @@ export function AddSubscriptionModal({
     setSearchQuery(preset.name);
     setShowCustomForm(false);
     if (preset.plans.length === 1) {
-      setSelectedPlan(preset.plans[0].name);
+      const onlyPlan = preset.plans[0];
+      setSelectedPlan(onlyPlan.name);
+      setPresetCostOverride(onlyPlan.price.toString());
+    } else {
+      setSelectedPlan('');
+      setPresetCostOverride('');
     }
   };
 
   const handleCustomSubmit = () => {
-    if (!customName.trim()) return;
+    const fallbackName = (customName || searchQuery).trim();
+    if (!fallbackName) return;
+    setCustomName(fallbackName);
     setShowCustomForm(true);
     setSelectedPreset(null);
   };
@@ -88,7 +96,10 @@ export function AddSubscriptionModal({
         subscriptionData = {
           user_id: user.id,
           name: selectedPreset.name,
-          cost: plan.price,
+          cost:
+            parseFloat(presetCostOverride) > 0
+              ? parseFloat(presetCostOverride)
+              : plan.price,
           billing_cycle: plan.cycle,
           start_date: presetStartDate || getTodayIndiaDateString(),
           category: selectedPreset.category,
@@ -127,6 +138,7 @@ export function AddSubscriptionModal({
       setSearchQuery('');
       setSelectedPreset(null);
       setSelectedPlan('');
+      setPresetCostOverride('');
       setPresetStartDate(getTodayIndiaDateString());
       setShowCustomForm(false);
       setCustomName('');
@@ -228,7 +240,10 @@ export function AddSubscriptionModal({
                   {selectedPreset.plans.map((plan) => (
                     <button
                       key={plan.name}
-                      onClick={() => setSelectedPlan(plan.name)}
+                      onClick={() => {
+                        setSelectedPlan(plan.name);
+                        setPresetCostOverride(plan.price.toString());
+                      }}
                       className={`w-full text-left px-5 py-3 border-2 rounded-xl transition-all ${
                         selectedPlan === plan.name
                           ? 'border-blue-600 bg-blue-100 shadow-md'
@@ -245,6 +260,21 @@ export function AddSubscriptionModal({
                     </button>
                   ))}
                 </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-800 mb-2">
+                  Amount (you can override)
+                </label>
+                <input
+                  type="number"
+                  value={presetCostOverride}
+                  onChange={(e) => setPresetCostOverride(e.target.value)}
+                  placeholder="Enter amount"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white transition-all"
+                />
+                <p className="mt-2 text-xs text-gray-600 font-medium">
+                  💡 Use this if your price differs from the listed plan (e.g., discounts, regional pricing).
+                </p>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-800 mb-2">
@@ -312,10 +342,7 @@ export function AddSubscriptionModal({
                   onChange={(e) =>
                     setCustomBillingCycle(
                       e.target.value as
-                        | 'Monthly'
-                        | 'Quarterly'
-                        | 'Yearly'
-                        | 'Once'
+                        | BillingCycle
                     )
                   }
                   className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white transition-all font-medium"
@@ -324,6 +351,7 @@ export function AddSubscriptionModal({
                   <option value="Quarterly">Quarterly</option>
                   <option value="Yearly">Yearly</option>
                   <option value="Once">Once</option>
+                  <option value="Bi-Annual">Bi-Annual (6 Months)</option>
                 </select>
               </div>
 
@@ -394,7 +422,10 @@ export function AddSubscriptionModal({
               disabled={
                 isSubmitting ||
                 (!selectedPreset && !showCustomForm) ||
-                (selectedPreset && (!selectedPlan || !presetStartDate)) ||
+                (selectedPreset &&
+                  (!selectedPlan ||
+                    !presetStartDate ||
+                    (parseFloat(presetCostOverride) ?? 0) <= 0)) ||
                 (showCustomForm && (!customName || !customCost || !customStartDate))
               }
               className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-semibold shadow-lg hover:shadow-xl"

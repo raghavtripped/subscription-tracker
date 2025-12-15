@@ -5,7 +5,7 @@ export interface PresetService {
   icon_key: string; // Matches a Lucide icon or custom SVG key
   color: string;
   category: SubscriptionCategory;
-  plans: { name: string; price: number; cycle: 'Monthly' | 'Quarterly' | 'Yearly' }[];
+  plans: { name: string; price: number; cycle: 'Monthly' | 'Quarterly' | 'Yearly' | 'Bi-Annual' }[];
 }
 
 export const PRESET_SERVICES: PresetService[] = [
@@ -31,6 +31,16 @@ export const PRESET_SERVICES: PresetService[] = [
       { name: "Basic", price: 199, cycle: "Monthly" },
       { name: "Standard", price: 499, cycle: "Monthly" },
       { name: "Premium", price: 649, cycle: "Monthly" },
+    ]
+  },
+  {
+    name: "Prime Video",
+    icon_key: "prime",
+    color: "#00A8E1",
+    category: "Entertainment",
+    plans: [
+      { name: "Mobile (6 Months)", price: 599, cycle: "Bi-Annual" },
+      { name: "Classic", price: 299, cycle: "Monthly" },
     ]
   },
   {
@@ -247,7 +257,29 @@ export const PRESET_SERVICES: PresetService[] = [
       { name: "Basic (100GB)", price: 130, cycle: "Monthly" },
       { name: "Standard (200GB)", price: 210, cycle: "Monthly" },
       { name: "Premium (2TB)", price: 650, cycle: "Monthly" },
+      { name: "Premium (2TB) Annual", price: 6500, cycle: "Yearly" },
       { name: "Basic Annual", price: 1300, cycle: "Yearly" },
+    ]
+  },
+  {
+    name: "ChatGPT",
+    icon_key: "custom",
+    color: "#10A37F",
+    category: "Utility",
+    plans: [
+      { name: "Plus", price: 1650, cycle: "Monthly" },
+      { name: "Team", price: 2500, cycle: "Monthly" },
+      { name: "Plus Annual", price: 16500, cycle: "Yearly" },
+    ]
+  },
+  {
+    name: "Cursor",
+    icon_key: "custom",
+    color: "#111827",
+    category: "Utility",
+    plans: [
+      { name: "Pro", price: 1650, cycle: "Monthly" },
+      { name: "Pro Annual", price: 16500, cycle: "Yearly" },
     ]
   },
   {

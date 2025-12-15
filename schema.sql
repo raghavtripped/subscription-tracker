@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS subscriptions (
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   cost NUMERIC(10, 2) NOT NULL,
-  billing_cycle TEXT NOT NULL CHECK (billing_cycle IN ('Monthly', 'Quarterly', 'Yearly', 'Once')),
+  billing_cycle TEXT NOT NULL CHECK (billing_cycle IN ('Monthly', 'Quarterly', 'Yearly', 'Once', 'Bi-Annual')),
   start_date DATE NOT NULL,
   category TEXT NOT NULL CHECK (category IN ('Entertainment', 'Utility', 'Food', 'Health', 'Music', 'Gaming', 'News', 'Other')),
   icon_key TEXT NOT NULL DEFAULT 'custom',

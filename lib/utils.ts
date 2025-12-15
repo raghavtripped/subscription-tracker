@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { formatInTimeZone } from 'date-fns-tz';
+import { BillingCycle } from '@/types/database';
 
 // India timezone constant
 const INDIA_TIMEZONE = 'Asia/Kolkata';
@@ -51,7 +52,7 @@ export function getTodayIndiaDateString(): string {
 
 export function getNextRenewalDate(
   startDate: string,
-  billingCycle: 'Monthly' | 'Quarterly' | 'Yearly' | 'Once'
+  billingCycle: BillingCycle
 ): Date {
   // Parse start date in India timezone to avoid timezone shifts
   const start = parseIndiaDate(startDate);
@@ -63,6 +64,9 @@ export function getNextRenewalDate(
       break;
     case 'Quarterly':
       next.setMonth(next.getMonth() + 3);
+      break;
+    case 'Bi-Annual':
+      next.setMonth(next.getMonth() + 6);
       break;
     case 'Yearly':
       next.setFullYear(next.getFullYear() + 1);
@@ -76,7 +80,7 @@ export function getNextRenewalDate(
 
 export function getDaysUntilRenewal(
   startDate: string,
-  billingCycle: 'Monthly' | 'Quarterly' | 'Yearly' | 'Once'
+  billingCycle: BillingCycle
 ): number {
   const nextRenewal = getNextRenewalDate(startDate, billingCycle);
   // Get today's date in India timezone
@@ -93,13 +97,15 @@ export function getDaysUntilRenewal(
 
 export function calculateMonthlyCost(
   cost: number,
-  billingCycle: 'Monthly' | 'Quarterly' | 'Yearly' | 'Once'
+  billingCycle: BillingCycle
 ): number {
   switch (billingCycle) {
     case 'Monthly':
       return cost;
     case 'Quarterly':
       return cost / 3;
+    case 'Bi-Annual':
+      return cost / 6;
     case 'Yearly':
       return cost / 12;
     case 'Once':
