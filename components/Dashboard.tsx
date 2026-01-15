@@ -13,6 +13,7 @@ import {
   getDaysUntilRenewal,
   getNextRenewalDate,
   formatIndiaDate,
+  dateToIndiaDateString,
 } from '@/lib/utils';
 import { Subscription } from '@/types/database';
 import { useRouter } from 'next/navigation';
@@ -85,6 +86,30 @@ export function Dashboard({ user }: DashboardProps) {
     },
   });
 
+  const renewMutation = useMutation({
+    mutationFn: async (subscription: Subscription) => {
+      if (subscription.billing_cycle === 'Once') {
+        throw new Error('Cannot renew a one-time payment');
+      }
+
+      const nextRenewalDate = getNextRenewalDate(
+        subscription.start_date,
+        subscription.billing_cycle
+      );
+      const newStartDate = dateToIndiaDateString(nextRenewalDate);
+
+      const { error } = await supabase
+        .from('subscriptions')
+        .update({ start_date: newStartDate })
+        .eq('id', subscription.id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
+    },
+  });
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push('/login');
@@ -93,6 +118,15 @@ export function Dashboard({ user }: DashboardProps) {
   const handleEdit = (subscription: Subscription) => {
     setEditingSubscription(subscription);
     setIsEditModalOpen(true);
+  };
+
+  const handleRenew = async (subscription: Subscription) => {
+    try {
+      await renewMutation.mutateAsync(subscription);
+    } catch (error) {
+      console.error('Error renewing subscription:', error);
+      alert('Failed to renew subscription. Please try again.');
+    }
   };
 
   // Calculate monthly spend
@@ -310,12 +344,20 @@ export function Dashboard({ user }: DashboardProps) {
                           <p className="text-2xl font-bold text-gray-900 mb-2">
                             {formatCurrency(renewal.amount)}
                           </p>
-                          <button
-                            onClick={() => handleEdit(renewal.subscription)}
-                            className="text-sm text-blue-600 hover:text-blue-700 font-semibold"
-                          >
-                            Edit
-                          </button>
+                          <div className="flex gap-3 justify-end">
+                            <button
+                              onClick={() => handleRenew(renewal.subscription)}
+                              className="text-sm text-green-600 hover:text-green-700 font-semibold"
+                            >
+                              Renewed
+                            </button>
+                            <button
+                              onClick={() => handleEdit(renewal.subscription)}
+                              className="text-sm text-blue-600 hover:text-blue-700 font-semibold"
+                            >
+                              Edit
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -349,6 +391,7 @@ export function Dashboard({ user }: DashboardProps) {
                 subscription={subscription}
                 onDelete={(id) => deleteMutation.mutate(id)}
                 onEdit={handleEdit}
+                onRenew={handleRenew}
               />
             ))}
           </div>

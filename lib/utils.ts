@@ -50,6 +50,13 @@ export function getTodayIndiaDateString(): string {
   return formatInTimeZone(now, INDIA_TIMEZONE, 'yyyy-MM-dd');
 }
 
+/**
+ * Convert a Date object to YYYY-MM-DD string format (India timezone)
+ */
+export function dateToIndiaDateString(date: Date): string {
+  return formatInTimeZone(date, INDIA_TIMEZONE, 'yyyy-MM-dd');
+}
+
 export function getNextRenewalDate(
   startDate: string,
   billingCycle: BillingCycle

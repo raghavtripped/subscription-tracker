@@ -1,18 +1,20 @@
 import { Subscription } from '@/types/database';
 import { formatCurrency, getDaysUntilRenewal, formatIndiaDate } from '@/lib/utils';
 import { SubscriptionIcon } from './SubscriptionIcon';
-import { Pencil } from 'lucide-react';
+import { Pencil, RotateCcw } from 'lucide-react';
 
 interface SubscriptionCardProps {
   subscription: Subscription;
   onDelete?: (id: string) => void;
   onEdit?: (subscription: Subscription) => void;
+  onRenew?: (subscription: Subscription) => void;
 }
 
 export function SubscriptionCard({
   subscription,
   onDelete,
   onEdit,
+  onRenew,
 }: SubscriptionCardProps) {
   const daysUntilRenewal = getDaysUntilRenewal(
     subscription.start_date,
@@ -87,6 +89,16 @@ export function SubscriptionCard({
       </div>
 
       <div className="flex flex-col gap-2">
+        {onRenew && subscription.billing_cycle !== 'Once' && (
+          <button
+            onClick={() => onRenew(subscription)}
+            className="p-2.5 text-green-600 hover:bg-green-50 rounded-lg transition-all hover:scale-110"
+            aria-label="Mark as renewed"
+            title="Mark as renewed - moves to next billing cycle"
+          >
+            <RotateCcw className="w-5 h-5" />
+          </button>
+        )}
         {onEdit && (
           <button
             onClick={() => onEdit(subscription)}
