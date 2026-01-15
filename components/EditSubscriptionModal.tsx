@@ -73,7 +73,7 @@ export function EditSubscriptionModal({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto border-2 border-gray-200">
-        <div className="sticky top-0 bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 flex items-center justify-between rounded-t-2xl z-10">
+        <div className="sticky top-0 bg-gradient-to-r from-stone-600 to-stone-700 text-white p-6 flex items-center justify-between rounded-t-2xl z-10">
           <h2 className="text-2xl font-bold">Edit Subscription</h2>
           <button
             onClick={onClose}
@@ -91,7 +91,7 @@ export function EditSubscriptionModal({
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 bg-white transition-all"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-gray-900 bg-white transition-all"
               placeholder="Subscription name"
             />
           </div>
@@ -102,7 +102,7 @@ export function EditSubscriptionModal({
               type="number"
               value={cost}
               onChange={(e) => setCost(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 bg-white transition-all"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-gray-900 bg-white transition-all"
               placeholder="0"
             />
           </div>
@@ -114,7 +114,7 @@ export function EditSubscriptionModal({
               onChange={(e) =>
                 setBillingCycle(e.target.value as BillingCycle)
               }
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 bg-white transition-all font-medium"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-gray-900 bg-white transition-all font-medium"
             >
               <option value="Monthly">Monthly</option>
               <option value="Quarterly">Quarterly</option>
@@ -130,7 +130,7 @@ export function EditSubscriptionModal({
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 bg-white transition-all"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-gray-900 bg-white transition-all"
             />
             <p className="mt-2 text-xs text-gray-600 font-medium">
               💡 This is when your subscription started or will start
@@ -146,7 +146,7 @@ export function EditSubscriptionModal({
                   e.target.value as SubscriptionCategory
                 )
               }
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 bg-white transition-all font-medium"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-gray-900 bg-white transition-all font-medium"
             >
               <option value="Entertainment">Entertainment</option>
               <option value="Utility">Utility</option>
@@ -168,7 +168,7 @@ export function EditSubscriptionModal({
               value={paymentMethod}
               onChange={(e) => setPaymentMethod(e.target.value)}
               placeholder="e.g., Paytm UPI, HDFC Credit Card, PhonePe"
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 bg-white transition-all"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-gray-900 bg-white transition-all"
             />
             <p className="mt-2 text-xs text-gray-600 font-medium">
               💡 Track which payment method is linked to this subscription
@@ -185,7 +185,7 @@ export function EditSubscriptionModal({
             <button
               onClick={handleSubmit}
               disabled={isSubmitting || !name || !cost || !startDate}
-              className="flex-1 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-semibold shadow-lg hover:shadow-xl"
+              className="flex-1 px-6 py-3 bg-gradient-to-r from-stone-600 to-stone-700 text-white rounded-xl hover:from-stone-700 hover:to-stone-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-semibold shadow-lg hover:shadow-xl"
             >
               {isSubmitting ? 'Saving...' : 'Save Changes'}
             </button>

@@ -47,7 +47,7 @@ export function SubscriptionCard({
 
   return (
     <div
-      className="flex items-center gap-4 p-5 md:p-6 bg-white rounded-xl shadow-lg border-2 border-gray-200 hover:shadow-xl hover:border-blue-300 transition-all transform hover:-translate-y-1"
+      className="flex items-center gap-4 p-5 md:p-6 bg-white rounded-xl shadow-lg border-2 border-stone-200 hover:shadow-xl hover:border-amber-300 transition-all transform hover:-translate-y-1"
       style={{ borderLeftColor: subscription.color, borderLeftWidth: '6px' }}
     >
       <div
@@ -68,7 +68,7 @@ export function SubscriptionCard({
           <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-semibold">
             {subscription.category}
           </span>
-          <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
+          <span className="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-semibold">
             {subscription.billing_cycle}
           </span>
         </div>
@@ -102,7 +102,7 @@ export function SubscriptionCard({
         {onEdit && (
           <button
             onClick={() => onEdit(subscription)}
-            className="p-2.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-all hover:scale-110"
+            className="p-2.5 text-amber-700 hover:bg-amber-50 rounded-lg transition-all hover:scale-110"
             aria-label="Edit subscription"
             title="Edit subscription"
           >

@@ -180,7 +180,7 @@ export function Dashboard({ user }: DashboardProps) {
     profile?.full_name || user.email?.split('@')[0] || 'User';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-stone-50 to-amber-50">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 md:mb-12 gap-4">
@@ -201,16 +201,16 @@ export function Dashboard({ user }: DashboardProps) {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-6 md:p-8 rounded-2xl shadow-xl text-white transform hover:scale-105 transition-transform">
-            <p className="text-sm md:text-base font-semibold text-blue-100 mb-3 uppercase tracking-wide">
+          <div className="bg-gradient-to-br from-amber-600 to-amber-700 p-6 md:p-8 rounded-2xl shadow-xl text-white transform hover:scale-105 transition-transform">
+            <p className="text-sm md:text-base font-semibold text-amber-100 mb-3 uppercase tracking-wide">
               Monthly Spend
             </p>
             <p className="text-4xl md:text-5xl font-bold">
               {formatCurrency(monthlySpend)}
             </p>
           </div>
-          <div className="bg-gradient-to-br from-purple-500 to-pink-600 p-6 md:p-8 rounded-2xl shadow-xl text-white transform hover:scale-105 transition-transform">
-            <p className="text-sm md:text-base font-semibold text-purple-100 mb-3 uppercase tracking-wide">
+          <div className="bg-gradient-to-br from-stone-600 to-stone-700 p-6 md:p-8 rounded-2xl shadow-xl text-white transform hover:scale-105 transition-transform">
+            <p className="text-sm md:text-base font-semibold text-stone-100 mb-3 uppercase tracking-wide">
               Yearly Projection
             </p>
             <p className="text-4xl md:text-5xl font-bold">
@@ -225,8 +225,8 @@ export function Dashboard({ user }: DashboardProps) {
             onClick={() => setViewMode('all')}
             className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all ${
               viewMode === 'all'
-                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md'
-                : 'text-gray-700 hover:bg-gray-100'
+                ? 'bg-gradient-to-r from-amber-600 to-amber-700 text-white shadow-md'
+                : 'text-stone-700 hover:bg-amber-50'
             }`}
           >
             <List className="w-5 h-5" />
@@ -236,8 +236,8 @@ export function Dashboard({ user }: DashboardProps) {
             onClick={() => setViewMode('upcoming')}
             className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all ${
               viewMode === 'upcoming'
-                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md'
-                : 'text-gray-700 hover:bg-gray-100'
+                ? 'bg-gradient-to-r from-amber-600 to-amber-700 text-white shadow-md'
+                : 'text-stone-700 hover:bg-amber-50'
             }`}
           >
             <Calendar className="w-5 h-5" />
@@ -254,7 +254,7 @@ export function Dashboard({ user }: DashboardProps) {
         <div className="mb-8">
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl font-semibold text-lg transform hover:-translate-y-0.5"
+            className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-amber-600 to-amber-700 text-white rounded-xl hover:from-amber-700 hover:to-amber-800 transition-all shadow-lg hover:shadow-xl font-semibold text-lg transform hover:-translate-y-0.5"
           >
             <Plus className="w-6 h-6" />
             Add Subscription
@@ -264,7 +264,7 @@ export function Dashboard({ user }: DashboardProps) {
         {/* Content based on view mode */}
         {isLoading ? (
           <div className="text-center py-16 bg-white rounded-2xl shadow-lg border-2 border-gray-200">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto mb-4"></div>
             <p className="text-lg text-gray-700 font-medium">Loading subscriptions...</p>
           </div>
         ) : viewMode === 'upcoming' ? (
@@ -278,7 +278,7 @@ export function Dashboard({ user }: DashboardProps) {
               </div>
             ) : (
               <>
-                <div className="bg-gradient-to-r from-orange-500 to-red-600 p-6 rounded-2xl shadow-xl text-white">
+                <div className="bg-gradient-to-r from-amber-700 to-amber-800 p-6 rounded-2xl shadow-xl text-white">
                   <p className="text-sm font-semibold text-orange-100 mb-2 uppercase tracking-wide">
                     Total Amount Due (Next 31 Days)
                   </p>
@@ -347,13 +347,13 @@ export function Dashboard({ user }: DashboardProps) {
                           <div className="flex gap-3 justify-end">
                             <button
                               onClick={() => handleRenew(renewal.subscription)}
-                              className="text-sm text-green-600 hover:text-green-700 font-semibold"
+                              className="text-sm text-green-700 hover:text-green-800 font-semibold"
                             >
                               Renewed
                             </button>
                             <button
                               onClick={() => handleEdit(renewal.subscription)}
-                              className="text-sm text-blue-600 hover:text-blue-700 font-semibold"
+                              className="text-sm text-amber-700 hover:text-amber-800 font-semibold"
                             >
                               Edit
                             </button>
@@ -374,7 +374,7 @@ export function Dashboard({ user }: DashboardProps) {
             <p className="text-gray-600 mb-6">Start tracking your subscriptions to see them here</p>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg font-semibold"
+              className="px-6 py-3 bg-gradient-to-r from-amber-600 to-amber-700 text-white rounded-xl hover:from-amber-700 hover:to-amber-800 transition-all shadow-lg font-semibold"
             >
               Add your first subscription
             </button>

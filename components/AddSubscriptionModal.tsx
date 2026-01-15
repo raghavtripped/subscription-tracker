@@ -162,7 +162,7 @@ export function AddSubscriptionModal({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto border-2 border-gray-200">
-        <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 flex items-center justify-between rounded-t-2xl z-10">
+        <div className="sticky top-0 bg-gradient-to-r from-amber-600 to-amber-700 text-white p-6 flex items-center justify-between rounded-t-2xl z-10">
           <h2 className="text-2xl font-bold">Add Subscription</h2>
           <button
             onClick={onClose}
@@ -189,7 +189,7 @@ export function AddSubscriptionModal({
                 setSelectedPreset(null);
                 setShowCustomForm(false);
               }}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white transition-all text-base"
+              className="w-full px-4 py-3 border-2 border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-gray-900 bg-white transition-all text-base"
             />
 
             {/* Preset Suggestions */}
@@ -200,7 +200,7 @@ export function AddSubscriptionModal({
                     <button
                       key={preset.name}
                       onClick={() => handlePresetSelect(preset)}
-                      className="w-full text-left px-5 py-3 hover:bg-blue-50 border-b border-gray-100 last:border-b-0 transition-colors"
+                      className="w-full text-left px-5 py-3 hover:bg-amber-50 border-b border-stone-100 last:border-b-0 transition-colors"
                     >
                       <div className="font-semibold text-gray-900 text-base">{preset.name}</div>
                       <div className="text-sm text-gray-600 font-medium">
@@ -211,7 +211,7 @@ export function AddSubscriptionModal({
                 ) : (
                   <button
                     onClick={handleCustomSubmit}
-                    className="w-full text-left px-5 py-3 hover:bg-indigo-50 transition-colors"
+                    className="w-full text-left px-5 py-3 hover:bg-amber-50 transition-colors"
                   >
                     <div className="font-semibold text-gray-900 text-base">
                       Create &quot;{searchQuery}&quot;
@@ -231,7 +231,7 @@ export function AddSubscriptionModal({
 
           {/* Preset Form */}
           {selectedPreset && (
-            <div className="space-y-6 bg-blue-50 p-5 rounded-xl border-2 border-blue-200">
+            <div className="space-y-6 bg-amber-50 p-5 rounded-xl border-2 border-amber-200">
               <div>
                 <label className="block text-sm font-semibold text-gray-800 mb-3">
                   Select Plan
@@ -246,8 +246,8 @@ export function AddSubscriptionModal({
                       }}
                       className={`w-full text-left px-5 py-3 border-2 rounded-xl transition-all ${
                         selectedPlan === plan.name
-                          ? 'border-blue-600 bg-blue-100 shadow-md'
-                          : 'border-gray-300 hover:bg-white hover:border-blue-400'
+                          ? 'border-amber-600 bg-amber-100 shadow-md'
+                          : 'border-stone-300 hover:bg-white hover:border-amber-400'
                       }`}
                     >
                       <div className="flex justify-between items-center">
@@ -270,7 +270,7 @@ export function AddSubscriptionModal({
                   value={presetCostOverride}
                   onChange={(e) => setPresetCostOverride(e.target.value)}
                   placeholder="Enter amount"
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white transition-all"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-gray-900 bg-white transition-all"
                 />
                 <p className="mt-2 text-xs text-gray-600 font-medium">
                   💡 Use this if your price differs from the listed plan (e.g., discounts, regional pricing).
@@ -284,7 +284,7 @@ export function AddSubscriptionModal({
                   type="date"
                   value={presetStartDate}
                   onChange={(e) => setPresetStartDate(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white transition-all"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-gray-900 bg-white transition-all"
                 />
                 <p className="mt-2 text-xs text-gray-600 font-medium">
                   💡 When did/will this subscription start?
@@ -299,7 +299,7 @@ export function AddSubscriptionModal({
                   value={paymentMethod}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                   placeholder="e.g., Paytm UPI, HDFC Credit Card, PhonePe"
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white transition-all"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-gray-900 bg-white transition-all"
                 />
                 <p className="mt-2 text-xs text-gray-600 font-medium">
                   💡 Track which payment method is linked to this subscription
@@ -310,7 +310,7 @@ export function AddSubscriptionModal({
 
           {/* Custom Form */}
           {showCustomForm && (
-            <div className="space-y-5 bg-indigo-50 p-5 rounded-xl border-2 border-indigo-200">
+            <div className="space-y-5 bg-stone-50 p-5 rounded-xl border-2 border-stone-200">
               <div>
                 <label className="block text-sm font-semibold text-gray-800 mb-2">Name</label>
                 <input
@@ -318,7 +318,7 @@ export function AddSubscriptionModal({
                   value={customName || searchQuery}
                   onChange={(e) => setCustomName(e.target.value)}
                   placeholder="Subscription name"
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white transition-all"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-gray-900 bg-white transition-all"
                 />
               </div>
 
@@ -329,7 +329,7 @@ export function AddSubscriptionModal({
                   value={customCost}
                   onChange={(e) => setCustomCost(e.target.value)}
                   placeholder="0"
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white transition-all"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-gray-900 bg-white transition-all"
                 />
               </div>
 
@@ -345,7 +345,7 @@ export function AddSubscriptionModal({
                         | BillingCycle
                     )
                   }
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white transition-all font-medium"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-gray-900 bg-white transition-all font-medium"
                 >
                   <option value="Monthly">Monthly</option>
                   <option value="Quarterly">Quarterly</option>
@@ -363,7 +363,7 @@ export function AddSubscriptionModal({
                   type="date"
                   value={customStartDate}
                   onChange={(e) => setCustomStartDate(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white transition-all"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-gray-900 bg-white transition-all"
                 />
                 <p className="mt-2 text-xs text-gray-600 font-medium">
                   💡 When did/will this subscription start?
@@ -379,7 +379,7 @@ export function AddSubscriptionModal({
                       e.target.value as SubscriptionCategory
                     )
                   }
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white transition-all font-medium"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-gray-900 bg-white transition-all font-medium"
                 >
                   <option value="Entertainment">Entertainment</option>
                   <option value="Utility">Utility</option>
@@ -400,7 +400,7 @@ export function AddSubscriptionModal({
                   value={paymentMethod}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                   placeholder="e.g., Paytm UPI, HDFC Credit Card, PhonePe"
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white transition-all"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-gray-900 bg-white transition-all"
                 />
                 <p className="mt-2 text-xs text-gray-600 font-medium">
                   💡 Track which payment method is linked to this subscription
@@ -428,7 +428,7 @@ export function AddSubscriptionModal({
                     (parseFloat(presetCostOverride) ?? 0) <= 0)) ||
                 (showCustomForm && (!customName || !customCost || !customStartDate))
               }
-              className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-semibold shadow-lg hover:shadow-xl"
+              className="flex-1 px-6 py-3 bg-gradient-to-r from-amber-600 to-amber-700 text-white rounded-xl hover:from-amber-700 hover:to-amber-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-semibold shadow-lg hover:shadow-xl"
             >
               {isSubmitting ? 'Adding...' : 'Add Subscription'}
             </button>
